@@ -48,3 +48,5 @@ requirements.lock
 
 # Others
 .idea/
+
+scraped_data/properties.ndjson
