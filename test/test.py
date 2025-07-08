@@ -22,7 +22,7 @@ from pipelines.helper_functions import read_ndjson_from_minio,clean_accommodatio
 
 # date = datetime.date.today()  - datetime.timedelta(days=3)
 # s3_delta_path_stg = f"s3a://delta/delta_table/raw/delta_{date}"
-link ="https://www.dng.ie/property-for-sale/3-bedroom-house-for-sale-in-saint-anthonys-26-plunkett-road-finglas-dublin-11-d11t6r0-67b60005c3a41134fa92ada2/"
+link =""
 URL = os.getenv("URL")
 JSON_PATH = os.getenv("JSON_PATH")
 JSON_SUFFIX = os.getenv("JSON_SUFFIX")
