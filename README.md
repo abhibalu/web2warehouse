@@ -61,8 +61,8 @@ After moving to Dublin and taking some time between jobs, I found myself natural
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/dublin-property-scraper.git
-   cd dublin-property-scraper
+   git clone https://github.com/abhibalu/web2warehouse.git
+   cd real_estate_pipeline
 2. Install dependencies using uv
 uv venv
 source .venv/bin/activate
