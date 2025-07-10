@@ -29,6 +29,7 @@ s3 = create_minio_client(endpoint_url,access_key_id,secret_access_key)
 
 def read_ndjson_from_minio(date):
     object_key = OBJECT_NAME_TEMPLATE.format(date=date)
+    print(f'object_key - {object_key}')
 
     try:
         response = s3.get_object(Bucket=BUCKET_NAME, Key=object_key)

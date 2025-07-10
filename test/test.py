@@ -1,34 +1,15 @@
-import os
-import polars as pl
 import json
-from deltalake import write_deltalake, DeltaTable
-import datetime
 
-from pipelines.helper_functions import read_ndjson_from_minio,clean_accommodation_summary
+room_details_lengths = []
 
+with open("scraped_data/properties.ndjson", "r") as f:
+    for line in f:
+        obj = json.loads(line)
+        room_details = obj.get("room_details")
+        if isinstance(room_details, list):
+            length = len(room_details)
+        else:
+            length = 0  # or None if you prefer
+        room_details_lengths.append(length)
 
-# MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY_ID")
-# MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_ACCESS_KEY")
-# MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT_URL")
-
-# storage_options = {
-#     "AWS_ACCESS_KEY_ID": MINIO_ACCESS_KEY,
-#     "AWS_SECRET_ACCESS_KEY": MINIO_SECRET_KEY,
-#     "AWS_ENDPOINT_URL": MINIO_ENDPOINT,
-#     "AWS_ALLOW_HTTP": "true",
-#     "AWS_S3_ALLOW_UNSAFE_RENAME": "true"
-# }
-# # storage_options_json = json.dumps(storage_options)
-
-# date = datetime.date.today()  - datetime.timedelta(days=3)
-# s3_delta_path_stg = f"s3a://delta/delta_table/raw/delta_{date}"
-link =""
-URL = os.getenv("URL")
-JSON_PATH = os.getenv("JSON_PATH")
-JSON_SUFFIX = os.getenv("JSON_SUFFIX")
-
-def transform_to_json_url() -> str:
-    return link.replace(URL, f"{URL}/{JSON_PATH}") + JSON_SUFFIX
-
-strr = transform_to_json_url()
-print(strr)
+print(room_details_lengths)
