@@ -48,5 +48,6 @@ requirements.lock
 
 # Others
 .idea/
+test/
 
 scraped_data/properties.ndjson
