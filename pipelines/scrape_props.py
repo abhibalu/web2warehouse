@@ -111,7 +111,7 @@ def scrape_and_upload_ndjson(links: List[str]):
     print(f"🚀 NDJSON file uploaded to MinIO bucket '{BUCKET_NAME}' as '{object_name}'")
 
 if __name__ == "__main__":
-    start_page = 23
+    start_page = 24
     end_page = 24
     links = scrape_props_links_across_pages(start_page=start_page, end_page=end_page)
     print(f"🔗 Total property links found: {len(links)}")

@@ -156,3 +156,14 @@ def clean_accommodation_summary_column(df: pl.DataFrame, column: str = "accomada
             return_dtype=pl.Utf8
         ).alias(column)
     )
+
+def explode_room_details(df: pl.DataFrame) -> pl.DataFrame:
+    exploded = df.select(["id", "room_details"]).explode("room_details")
+
+    return exploded.select([
+        pl.col("id"),
+        pl.col("room_details").struct.field("name").alias("room_name"),
+        pl.col("room_details").struct.field("dimensions").alias("dimensions"),
+        pl.col("room_details").struct.field("dimensionsAlt").alias("dimensions_alt"),
+        pl.col("room_details").struct.field("description").alias("description"),
+    ])
