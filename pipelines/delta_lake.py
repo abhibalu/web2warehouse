@@ -4,7 +4,7 @@ import polars as pl
 import json
 from deltalake import write_deltalake, DeltaTable
 import datetime
-from datetime import datetime, date, timezone
+from datetime import datetime, date, timezone,timedelta
 import re
 
 from pipelines.helper_functions import read_ndjson_from_minio,flatten_and_concatenate_address_fields,clean_accommodation_summary_column,explode_room_details
@@ -23,8 +23,8 @@ storage_options = {
 }
 # storage_options_json = json.dumps(storage_options)
 
-date = date.today()
-# - datetime.timedelta(days=3)
+date = date.today() - timedelta(days=2)
+
 s3_delta_path_stg = f"s3a://delta/delta_table/raw/delta_{date}"
 s3_delta_path_intermediate = f"s3a://delta/delta_table/silver/delta_clean"
 s3_delta_path_property = f"s3a://delta/delta_table/silver/delta_clean/property_details" 
@@ -98,13 +98,15 @@ def create_intermediate_clean_layer_incremental():
         s3_delta_path_property,
         property_df,
         storage_options=storage_options,
-        mode="append"
+        mode="append",
+        schema_mode="merge",
     )
     write_deltalake(
         s3_delta_path_room_items,
         room_items_df,
         storage_options=storage_options,
-        mode="append"
+        mode="append",
+        schema_mode="merge"
     )
 
     print(f"✅ Appended {property_df.shape[0]} property records.")
