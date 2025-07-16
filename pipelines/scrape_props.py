@@ -60,8 +60,8 @@ def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
             all_links.extend(page_links)
 
             if page!= end_page:
-                print("waiting 60 seconds before the next page...")
-                time.sleep(60)
+                print("waiting 10 seconds before the next page...")
+                time.sleep(10)
 
     except Exception as e:
         print(f"❌ Error scraping pages: {e}")
@@ -111,8 +111,8 @@ def scrape_and_upload_ndjson(links: List[str]):
     print(f"🚀 NDJSON file uploaded to MinIO bucket '{BUCKET_NAME}' as '{object_name}'")
 
 if __name__ == "__main__":
-    start_page = 20
-    end_page = 25
+    start_page = 24
+    end_page = 24
     links = scrape_props_links_across_pages(start_page=start_page, end_page=end_page)
     print(f"🔗 Total property links found: {len(links)}")
     scrape_and_upload_ndjson(links)

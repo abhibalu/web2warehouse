@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from typing import List, Dict
 import polars as pl
 import re
+import uuid
+
 
 from pipelines.minio_upload import create_minio_client  # use your existing shared function
 load_dotenv()
@@ -29,6 +31,7 @@ s3 = create_minio_client(endpoint_url,access_key_id,secret_access_key)
 
 def read_ndjson_from_minio(date):
     object_key = OBJECT_NAME_TEMPLATE.format(date=date)
+    print(f'object_key - {object_key}')
 
     try:
         response = s3.get_object(Bucket=BUCKET_NAME, Key=object_key)
@@ -155,3 +158,20 @@ def clean_accommodation_summary_column(df: pl.DataFrame, column: str = "accomada
             return_dtype=pl.Utf8
         ).alias(column)
     )
+
+def explode_room_details(df: pl.DataFrame) -> pl.DataFrame:
+    # Keep id as prop_id and explode room_details
+    exploded = df.with_columns(pl.col("id").alias("prop_id")).explode("room_details")
+
+    # Generate UUIDs for each room item
+    uuid_series = pl.Series("room_entry_id", [str(uuid.uuid4()) for _ in range(exploded.height)])
+    exploded = exploded.with_columns(uuid_series)
+
+    return exploded.select([
+        pl.col("room_entry_id").alias("id"),  # Primary key
+        pl.col("prop_id"),
+        pl.col("room_details").struct.field("name").alias("room_name"),
+        pl.col("room_details").struct.field("dimensions").alias("dimensions"),
+        pl.col("room_details").struct.field("dimensionsAlt").alias("dimensions_alt"),
+        pl.col("room_details").struct.field("description").alias("description"),
+    ])
