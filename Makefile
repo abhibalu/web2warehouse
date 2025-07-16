@@ -6,7 +6,7 @@ endef
 
 run_all:
 	$(ACTIVATE) && \
-	for script in pipelines/scrape_props.py pipelines/minio_upload.py pipelines/delta_lake.py; do \
+	for script in pipelines/scrape_props.py pipelines/minio_upload.py pipelines/delta_lake.py pipelines/duckdb_ingestion.py; do \
 		echo "Running $$script..."; \
 		python $$script || exit 1; \
 	done
