@@ -17,6 +17,7 @@ After moving to Dublin and taking some time between jobs, I found myself natural
 - Staging `.ndjson` storage using MinIO-compatible object storage
 - Cleaning and flattening of nested fields (e.g., address, price, accommodation summary)
 - Conversion to columnar `.parquet` files and Delta Lake format
+- Implementing UPSERTs and ACID transactions with Delta Lake and warehouse
 - Adapted medallion-style architecture
 
 ---
@@ -26,7 +27,8 @@ After moving to Dublin and taking some time between jobs, I found myself natural
 - **Language**: Python 3.11  
 - **Scraping**: Selenium, undetected-chromedriver  
 - **Data Processing**: Polars  
-- **Storage**: MinIO (S3-compatible), Delta Lake  
+- **Object Storage and Delta Lake**: MinIO (S3-compatible), Delta Lake
+- **Data warehouse**: Duckdb
 - **Package Manager**: [uv](https://github.com/astral-sh/uv) (ultrafast Python dependency manager)  
 - **Other Tools**: pyarrow, boto3
 
@@ -95,17 +97,22 @@ python delta_lake.py --layer stg + Intermediate
 
 ### 🔭 Future Work / Roadmap
 
-- ⏳ Add orchestration with Dagster (Currently in dev)
-- 🧱 Load silver layer into a data warehouse (Druid / DuckDB)
+- ⏳ Add orchestration with Dagster 
+- 🧱 Load silver layer into a data warehouse (Druid / DuckDB) - DuckDB is done
+- 🚧 Create data models on warehouse using DBT (Currently in dev)
 - 📊 Build a dashboard in Apache Superset or Streamlit
 - 🧪 Add Pytest unit tests for cleaning + flattening functions
 
 
 
 ⚠️ Disclaimer
-This project is for educational and portfolio purposes only. It does not make use of or reference any specific website’s API or endorse any particular platform. Please use responsibly.
+This project is designed for educational purposes, demonstrating web scraping and data engineering practices. Ensure you do not violate any website's copyright or terms of service, and approach scraping responsibly and respectfully.
+
 
 🙌 Acknowledgments
 Built with curiosity, coffee, and way too many open browser tabs.
+
+📣 Feedback
+Your feedback is invaluable to improve this project. If you've built your project based on this repository or have suggestions, please let me know through creating an Issues or a Pull Request directly.
 
 
