@@ -23,7 +23,7 @@ storage_options = {
 }
 # storage_options_json = json.dumps(storage_options)
 
-date = date.today() - timedelta(days=2)
+date = date.today()
 
 s3_delta_path_stg = f"s3a://delta/delta_table/raw/delta_{date}"
 s3_delta_path_intermediate = f"s3a://delta/delta_table/silver/delta_clean"
@@ -92,7 +92,7 @@ def create_intermediate_clean_layer_incremental():
     room_items_df = explode_room_details(cleaned_df).with_columns(
         pl.lit(now_utc).alias("ingested_at")
     )
-
+    print(f"\n\n hellow wrold")
     # Step 5: Write both dataframes incrementally
     write_deltalake(
         s3_delta_path_property,
@@ -108,7 +108,7 @@ def create_intermediate_clean_layer_incremental():
         mode="append",
         schema_mode="merge"
     )
-
+    print(f"pipeline for delta is completed.")
     print(f"✅ Appended {property_df.shape[0]} property records.")
     print(f"✅ Appended {room_items_df.shape[0]} room detail records.")
 
@@ -119,8 +119,10 @@ if __name__ == "__main__":
     create_or_update_delta_lake_stg(date)
     create_intermediate_clean_layer_incremental()      # silver layer
     
-    dt = DeltaTable(s3_delta_path_property, storage_options=storage_options)
+    dt = DeltaTable(s3_delta_path_room_items, storage_options=storage_options)
     schema = dt.schema().to_arrow()
+    num_records = dt.to_pyarrow_table().num_rows
     print(f"Silver Table Schema: {schema}")
+    print(f"Number of Records: {num_records}")
     print(f"Version: {dt.version()}")
     print(f"Files: {dt.files()}")

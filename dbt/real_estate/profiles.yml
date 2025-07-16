@@ -1,0 +1,8 @@
+real_estate:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: /Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/dbt/real_estate/my_data.duckdb
+      extensions:
+        - delta

@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from typing import List, Dict
 import polars as pl
 import re
+import uuid
+
 
 from pipelines.minio_upload import create_minio_client  # use your existing shared function
 load_dotenv()
@@ -158,10 +160,16 @@ def clean_accommodation_summary_column(df: pl.DataFrame, column: str = "accomada
     )
 
 def explode_room_details(df: pl.DataFrame) -> pl.DataFrame:
-    exploded = df.select(["id", "room_details"]).explode("room_details")
+    # Keep id as prop_id and explode room_details
+    exploded = df.with_columns(pl.col("id").alias("prop_id")).explode("room_details")
+
+    # Generate UUIDs for each room item
+    uuid_series = pl.Series("room_entry_id", [str(uuid.uuid4()) for _ in range(exploded.height)])
+    exploded = exploded.with_columns(uuid_series)
 
     return exploded.select([
-        pl.col("id"),
+        pl.col("room_entry_id").alias("id"),  # Primary key
+        pl.col("prop_id"),
         pl.col("room_details").struct.field("name").alias("room_name"),
         pl.col("room_details").struct.field("dimensions").alias("dimensions"),
         pl.col("room_details").struct.field("dimensionsAlt").alias("dimensions_alt"),

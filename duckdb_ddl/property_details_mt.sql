@@ -1,0 +1,20 @@
+CREATE TABLE property_details_mt (
+    listed_title VARCHAR,
+    id VARCHAR,
+    location VARCHAR,
+    bedroom INTEGER,
+    price INTEGER,
+    latitude DOUBLE,
+    house_name VARCHAR,
+    house_number VARCHAR,
+    country VARCHAR,
+    postcode VARCHAR,
+    longitude DOUBLE,
+    bathroom INTEGER,
+    reception INTEGER,
+    floorarea_min INTEGER,
+    accomadation_summary VARCHAR,
+    status VARCHAR,
+    address VARCHAR,
+    ingested_at VARCHAR
+);

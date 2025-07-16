@@ -1,0 +1,15 @@
+name: real_estate
+version: 1.0
+config-version: 2
+
+profile: real_estate
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+
+models:
+  real_estate:
+    staging:
+      +materialized: table  # staging models are persisted tables
+    marts:
+      +materialized: table  # star schema models persisted as tables

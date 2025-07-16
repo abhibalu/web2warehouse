@@ -50,4 +50,3 @@ requirements.lock
 .idea/
 test/
 
-scraped_data/properties.ndjson
