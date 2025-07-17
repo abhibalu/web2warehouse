@@ -10,6 +10,8 @@ This repository presents a practical data engineering project that addresses rea
 The project is designed as a learning resource while incorporating comprehensive, real-world use cases. It emphasizes the full lifecycle of a data pipeline—from ingestion to transformation to visualization—making it a valuable foundation for hands-on data engineering practice.
 This repository is under active development, with orchestration on Kubernetes planned as part of the future scope.
 
+![Data Pipeline Diagram](images/pipeline_diagram.png)
+
 ---
 
 ### Features & Learnings
