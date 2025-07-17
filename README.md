@@ -91,7 +91,6 @@ Each layer progressively refines the data quality and structure to support scala
 ### 🔭 Future Work / Roadmap
 
 - ⏳ Add orchestration with Dagster (Currently in dev)
-- 🧱 Load silver layer into a data warehouse (Druid / DuckDB)
 - 🚧 Create data models on warehouse using DBT (Currently in dev)
 - 📊 Build a dashboard in Apache Superset
 - 📦 Containerize the application using Kubernetes for scalability and portability
