@@ -1,24 +1,27 @@
-# 🏠 Dublin Property Scraper
+## 🏠 Practical Data Engineering: A Hands-On Real-Estate Scraping Project Guide
 
-A modular Python tool for scraping, cleaning, and structuring real estate listing data in Dublin — built to explore the housing market and implement modern data engineering practices along the way.
-
----
-
-## 🧭 Motivation / Background
-
-After moving to Dublin and taking some time between jobs, I found myself naturally curious about the local housing market. Rather than browse listings manually, I turned that curiosity into a hands-on project — applying Python, web scraping, and data engineering tools to build a structured, queryable dataset of property listings. What started as a learning exercise grew into a useful tool and a clean, modular project.
+A modular Python project for scraping, cleaning, and structuring real estate listings in Dublin—featuring delta-rs for processing, dbt for transformation, DuckDB for storage, Superset for visualization, and Dagster for orchestration. Actively developed with future plans for Kubernetes integration.
 
 ---
 
-## ✨ Features
+## 🌟 About This Project
 
-- Automated web scraping of paginated listing pages using Selenium
-- Extraction of structured listing metadata in JSON format
-- Staging `.ndjson` storage using MinIO-compatible object storage
-- Cleaning and flattening of nested fields (e.g., address, price, accommodation summary)
-- Conversion to columnar `.parquet` files and Delta Lake format
-- Implementing UPSERTs and ACID transactions with Delta Lake and warehouse
-- Adapted medallion-style architecture
+This repository presents a practical data engineering project that addresses real-world challenges using modern, production-grade tools and workflows. It guides you through building a complete data application that collects real estate listings via web scraping, processes the data using delta-rs, transforms it with dbt, and stores it in DuckDB for analytics. Insights are delivered through interactive visualizations using Apache Superset, and workflows are managed with Dagster.
+The project is designed as a learning resource while incorporating comprehensive, real-world use cases. It emphasizes the full lifecycle of a data pipeline—from ingestion to transformation to visualization—making it a valuable foundation for hands-on data engineering practice.
+This repository is under active development, with orchestration on Kubernetes planned as part of the future scope.
+
+---
+
+### Features & Learnings
+- Scraping real estate listings using a combination of Selenium and Beautiful Soup
+- Implementing Change Data Capture (CDC) for efficient data updates
+- Using MinIO as an S3-compatible gateway for cloud-agnostic storage
+- Performing UPSERTs and maintaining ACID guarantees with Delta Lake via delta-rs
+- Transforming and testing data with dbt-core to ensure data quality and maintainability
+- Warehousing and querying with DuckDB for fast, local analytics
+- Visualizing insights with Apache Superset
+- Orchestrating data workflows using Dagster
+- Future scope: Deploying on Kubernetes for scalability and portability
 
 ---
 
