@@ -50,3 +50,4 @@ requirements.lock
 .idea/
 test/
 
+mermaid.md
