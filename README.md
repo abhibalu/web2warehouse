@@ -52,7 +52,7 @@ This project leverages a rich set of open-source technologies including Selenium
 2. Install dependencies using uv
 uv venv
 source .venv/bin/activate
-uv pip install -r requirements.lock
+uv pip install -r requirements.txt
 
 Configure MinIO access
 Set your AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_ENDPOINT_URL as environment variables.
@@ -65,7 +65,7 @@ Then, run the entire pipeline with:
 
 ```bash
 make run_all
-
+```
 
 ### 🔎 Output
 
