@@ -49,14 +49,18 @@ This project leverages a rich set of open-source technologies including Selenium
    ```bash
    git clone https://github.com/abhibalu/web2warehouse.git
    cd real_estate_pipeline
-2. Install dependencies using uv
+2. **Install dependencies using uv**
+```bash
 uv venv
 source .venv/bin/activate
 uv pip install -r requirements.txt
-
-Configure MinIO access
-Set your AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_ENDPOINT_URL as environment variables.
-
+```
+3. **Set your MinIO credentials and endpoint as environment variables:**
+```bash
+export AWS_ACCESS_KEY_ID=<your-access-key>
+export AWS_SECRET_ACCESS_KEY=<your-secret-key>
+export AWS_ENDPOINT_URL=http://localhost:9000
+```
 ### 🚀 Usage
 
 Before running, ensure that the MinIO server is up and running, and DuckDB is initialized.
@@ -84,11 +88,11 @@ Each layer progressively refines the data quality and structure to support scala
 
 ### 🔭 Future Work / Roadmap
 
-- ⏳ Add orchestration with Dagster 
-- 🧱 Load silver layer into a data warehouse (Druid / DuckDB) - DuckDB is done
+- ⏳ Add orchestration with Dagster (Currently in dev)
+- 🧱 Load silver layer into a data warehouse (Druid / DuckDB)
 - 🚧 Create data models on warehouse using DBT (Currently in dev)
-- 📊 Build a dashboard in Apache Superset or Streamlit
-- 🧪 Add Pytest unit tests for cleaning + flattening functions
+- 📊 Build a dashboard in Apache Superset
+- 📦 Containerize the application using Kubernetes for scalability and portability
 
 
 
