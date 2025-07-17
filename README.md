@@ -13,52 +13,33 @@ This repository is under active development, with orchestration on Kubernetes pl
 ---
 
 ### Features & Learnings
-- Scraping real estate listings using a combination of Selenium and Beautiful Soup
-- Implementing Change Data Capture (CDC) for efficient data updates
-- Using MinIO as an S3-compatible gateway for cloud-agnostic storage
-- Performing UPSERTs and maintaining ACID guarantees with Delta Lake via delta-rs
-- Transforming and testing data with dbt-core to ensure data quality and maintainability
-- Warehousing and querying with DuckDB for fast, local analytics
-- Visualizing insights with Apache Superset
-- Orchestrating data workflows using Dagster
-- Future scope: Deploying on Kubernetes for scalability and portability
+- Scraping real estate listings using a combination of **Selenium and Beautiful Soup**
+- Implementing **Change Data Capture (CDC)** for efficient data updates
+- Using **MinIO** as an S3-compatible gateway for cloud-agnostic storage
+- Performing UPSERTs and maintaining ACID guarantees with **Delta Lake via delta-rs**
+- Transforming and testing data with **dbt-core** to ensure data quality and maintainability
+- Warehousing and querying with **DuckDB** for fast, local analytics
+- Visualizing insights with **Apache Superset**
+- Orchestrating data workflows using **Dagster**
+- Future scope: Deploying on **Kubernetes** for scalability and portability
 
 ---
 
 ## 🛠 Tech Stack
+This project leverages a rich set of open-source technologies including Selenium, Polars, delta-rs, MinIO, DuckDB, dbt-core, Apache Superset, and Dagster—with future plans to run on Kubernetes for scalable, cloud-agnostic deployment.
 
 - **Language**: Python 3.11  
 - **Scraping**: Selenium, undetected-chromedriver  
 - **Data Processing**: Polars  
-- **Object Storage and Delta Lake**: MinIO (S3-compatible), Delta Lake
-- **Data warehouse**: Duckdb
-- **Package Manager**: [uv](https://github.com/astral-sh/uv) (ultrafast Python dependency manager)  
-- **Other Tools**: pyarrow, boto3
+- **Object Storage & Table Format**: MinIO (S3-compatible), delta-rs (Delta Lake in Rust)  
+- **Data Transformation & Testing**: dbt-core  
+- **Data Warehouse**: DuckDB  
+- **Visualization**: Apache Superset  
+- **Workflow Orchestration**: Dagster  
+- **Package Manager**: [uv](https://github.com/astral-sh/uv) – ultrafast Python dependency manager  
+- **Other Tools**: pyarrow, boto3  
 
 ---
-
-## 🗂 Project Structure
-```
-.
-├── pipelines
-│   ├── __init__.py
-│   ├── delta_lake.py
-│   ├── helper_functions.py
-│   ├── main.py
-│   ├── min_io_ingestion.py
-│   ├── minio_upload.py
-│   └── scrape_props.py
-├── pyproject.toml
-├── README.md
-├── requirements.txt
-├── scraped_data
-│   └── __init__.py
-├
-└── test
-    ├── __init__.py
-    └── test.py
-
-```
 
 ## ⚙️ Installation & Setup
 
@@ -78,25 +59,28 @@ Set your AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_ENDPOINT_URL as envir
 
 ### 🚀 Usage
 
-**Scrape property listing pages:**
+Before running, ensure that the MinIO server is up and running, and DuckDB is initialized.
+
+Then, run the entire pipeline with:
 
 ```bash
-python scraper.py
-```
-**Convert to .ndjson and upload to MinIO:**
-```
-python minio_upload.py
-```
-**Create staging and Cleaned Intermediate Delta Lake table from raw JSON:**
-```
-python delta_lake.py --layer stg + Intermediate
+make run_all
 
-```
 
 ### 🔎 Output
 
-- Staging Layer: Raw nested .parquet files stored in ./data/stg/
-- Silver Layer: Cleaned, flattened .parquet files stored in ./data/silver/
+This project follows the **Medallion Architecture** pattern for organizing data into multiple layers:
+
+- **Raw Layer**: The initial landing zone containing raw data ingested from upstream sources. Data is stored as-is in the cloud storage or raw tables without transformations.
+
+- **Bronze Layer**: Applies basic data hygiene such as data type casting, renaming columns for consistency, and schema enforcement on the raw data.
+
+- **Silver Layer**: Transforms the cleaned bronze data into structured facts and dimension tables, making the data analytics-ready.
+
+- **Gold Layer**: (Optional) Builds aggregated tables or One Big Table (OBT) with pre-computed metrics tailored for direct consumption by BI tools or end users.
+
+Each layer progressively refines the data quality and structure to support scalable, maintainable, and performant analytics workflows.
+
 
 ### 🔭 Future Work / Roadmap
 
