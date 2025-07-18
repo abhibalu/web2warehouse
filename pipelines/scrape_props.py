@@ -14,7 +14,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from dotenv import load_dotenv
 
 from pipelines.minio_upload import create_minio_client
-from pipelines.helper_functions import transform_to_json_url,extract_required_fields
+from pipelines.helper_functions import transform_to_json_url, flatten_json
 
 load_dotenv()
 
@@ -28,15 +28,15 @@ endpoint_url = os.getenv("MINIO_ENDPOINT_URL")
 access_key_id = os.getenv("MINIO_ACCESS_KEY_ID")
 secret_access_key = os.getenv("MINIO_SECRET_ACCESS_KEY")
 
-minio_client = create_minio_client(endpoint_url,access_key_id,secret_access_key)
+minio_client = create_minio_client(endpoint_url, access_key_id, secret_access_key)
 
 # Ensure output directory exists
 # os.makedirs(SCRAPED_DATA_DIR, exist_ok=True)
 
 
-
 date = datetime.date.today()
 # date = datetime.date.today()+datetime.timedelta(days=1)
+
 
 def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
     options = Options()
@@ -55,11 +55,17 @@ def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
 
             time.sleep(2)  # Allow lazy-loaded content
 
-            cards = driver.find_elements(By.CSS_SELECTOR, ".property-card .property-name a")
-            page_links = [card.get_attribute("href") for card in cards if card.get_attribute("href")]
+            cards = driver.find_elements(
+                By.CSS_SELECTOR, ".property-card .property-name a"
+            )
+            page_links = [
+                card.get_attribute("href")
+                for card in cards
+                if card.get_attribute("href")
+            ]
             all_links.extend(page_links)
 
-            if page!= end_page:
+            if page != end_page:
                 print("waiting 10 seconds before the next page...")
                 time.sleep(10)
 
@@ -69,7 +75,6 @@ def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
         driver.quit()
 
     return all_links
-
 
 
 def scrape_and_upload_ndjson(links: List[str]):
@@ -83,14 +88,16 @@ def scrape_and_upload_ndjson(links: List[str]):
 
             if response.status_code == 200:
                 raw_data = response.json()
-                cleaned_data = extract_required_fields(raw_data)
+                cleaned_data = flatten_json(raw_data)
 
                 if cleaned_data:
                     buffer.write(json.dumps(cleaned_data) + "\n")
                     print(f"✅ {i+1}/{len(links)}: Written to buffer")
 
             else:
-                print(f"⚠️ Failed to fetch {json_url} – Status Code: {response.status_code}")
+                print(
+                    f"⚠️ Failed to fetch {json_url} – Status Code: {response.status_code}"
+                )
 
         except Exception as e:
             print(f"❌ Error processing link {link}: {e}")
@@ -101,14 +108,15 @@ def scrape_and_upload_ndjson(links: List[str]):
 
     # Upload to MinIO
     minio_client.put_object(
-    Bucket=BUCKET_NAME,
-    Key=object_name,
-    Body=byte_data,
-    ContentLength=byte_data.getbuffer().nbytes,
-    ContentType="application/x-ndjson"
-)
+        Bucket=BUCKET_NAME,
+        Key=object_name,
+        Body=byte_data,
+        ContentLength=byte_data.getbuffer().nbytes,
+        ContentType="application/x-ndjson",
+    )
 
     print(f"🚀 NDJSON file uploaded to MinIO bucket '{BUCKET_NAME}' as '{object_name}'")
+
 
 if __name__ == "__main__":
     start_page = 24

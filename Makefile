@@ -20,3 +20,6 @@ run_delta:
 	$(ACTIVATE) && \
 	echo "Running delta_lake.py..." && \
 	python pipelines/delta_lake.py
+
+duckdb_bootstrap:
+	@envsubst < sql/bootstrap_duckdb.sql | duckdb data/warehouse.duckdb
