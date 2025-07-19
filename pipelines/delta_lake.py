@@ -1,15 +1,20 @@
 # delta_lake.py
 import os
 import polars as pl
-import json
 from deltalake import write_deltalake, DeltaTable
-import datetime
-from datetime import datetime, date, timezone,timedelta
-import re
+from datetime import date, datetime, timezone
 
-from pipelines.helper_functions import read_ndjson_from_minio,flatten_and_concatenate_address_fields,clean_accommodation_summary_column,explode_room_details
-# delta = create_bucket("delta")  # path to store your Delta Lake table
+from pipelines.helper_functions import (
+    read_ndjson_from_minio,
+    clean_accommodation_summary_column,
+    explode_room_details,
+    explode_images,
+    extract_agent_dim,
+    extract_location_dim,
+    extract_energy_metrics,
+)
 
+# Environment and storage setup
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY_ID")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_ACCESS_KEY")
 MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT_URL")
@@ -19,110 +24,128 @@ storage_options = {
     "AWS_SECRET_ACCESS_KEY": MINIO_SECRET_KEY,
     "AWS_ENDPOINT_URL": MINIO_ENDPOINT,
     "AWS_ALLOW_HTTP": "true",
-    "AWS_S3_ALLOW_UNSAFE_RENAME": "true"
+    "AWS_S3_ALLOW_UNSAFE_RENAME": "true",
 }
-# storage_options_json = json.dumps(storage_options)
 
-date = date.today()
+# Paths
+dt = date.today()
+RAW_PATH = f"s3a://delta/delta_table/raw/delta_{dt}"
+STG_PROP_PATH = "s3a://delta/delta_table/silver/property_details"
+STG_ROOMS_PATH = "s3a://delta/delta_table/silver/property_rooms"
+STG_IMAGES_PATH = "s3a://delta/delta_table/silver/property_images"
+STG_AGENT_PATH = "s3a://delta/delta_table/silver/agents"
+STG_LOCATION_PATH = "s3a://delta/delta_table/silver/locations"
+STG_ENERGY_PATH = "s3a://delta/delta_table/silver/property_energy"
 
-s3_delta_path_stg = f"s3a://delta/delta_table/raw/delta_{date}"
-s3_delta_path_intermediate = f"s3a://delta/delta_table/silver/delta_clean"
-s3_delta_path_property = f"s3a://delta/delta_table/silver/delta_clean/property_details" 
-s3_delta_path_room_items = f"s3a://delta/delta_table/silver/delta_clean/property_details_room_items" 
 
-def create_or_update_delta_lake_stg(date):
-    # Step 1: Read JSON records from MinIO
-    records = read_ndjson_from_minio(date)
-    
-    # flatten_records = [flatten_property_data(record) for record in records]
-    # print(flatten_records)
+def ingest_raw(date_str: date):
+    records = read_ndjson_from_minio(date_str)
     if not records:
-        print(f"No data found for date range {date}.")
+        print(f"No data to ingest for {date_str}")
         return
-
-    # Step 2: Convert to Polars DataFrame
     df = pl.DataFrame(records)
 
-    # Step 3: Write to Delta Lake
-    write_deltalake(s3_delta_path_stg, df,storage_options=storage_options,mode="overwrite",schema_mode='overwrite')
-    print(f"✅ Delta Lake updated with records on {date}")
+    # Drop columns with only nulls
+    null_cols = [c for c, dt in zip(df.columns, df.dtypes) if dt == pl.Null]
+    if null_cols:
+        df = df.drop(null_cols)
+        print(f"Dropped null-only columns: {null_cols}")
 
+    # Cast ambiguous columns to string
+    for col, dt in zip(df.columns, df.dtypes):
+        if dt == pl.Object:
+            df = df.with_columns(pl.col(col).cast(pl.Utf8))
 
-def read_delta_lake():
-    # Read Delta table as Polars DataFrame
-    dt = DeltaTable(s3_delta_path_stg,storage_options=storage_options)
-    return dt
-
-
-
-def create_intermediate_clean_layer_incremental():
-    # Step 1: Load staging and intermediate data
-    stg_df = pl.read_delta(s3_delta_path_stg, storage_options=storage_options)
-
-    try:
-        intermediate_df = pl.read_delta(s3_delta_path_property, storage_options=storage_options)
-    except Exception:
-        print("⚠️ Property intermediate layer not found. Assuming first run.")
-        intermediate_df = pl.DataFrame([])
-
-    key_col = "id"
-    if intermediate_df.is_empty():
-        new_records_df = stg_df
-    else:
-        existing_keys = intermediate_df.select(key_col).unique()
-        new_records_df = stg_df.filter(~pl.col(key_col).is_in(existing_keys[key_col]))
-
-    if new_records_df.is_empty():
-        print("✅ No new records to process.")
-        return
-
-    # Step 2: Clean the new records
-    cleaned_df = flatten_and_concatenate_address_fields(new_records_df)
-    cleaned_df = clean_accommodation_summary_column(cleaned_df)
-
-    # Step 3: Add ingestion timestamp
-    now_utc = datetime.now(timezone.utc).isoformat()
-    cleaned_df = cleaned_df.with_columns(
-        pl.lit(now_utc).alias("ingested_at")
-    )
-
-    # Step 4: Split into property and room_details tables
-    property_df = cleaned_df.drop("room_details")
-
-    room_items_df = explode_room_details(cleaned_df).with_columns(
-        pl.lit(now_utc).alias("ingested_at")
-    )
-    print(f"\n\n hellow wrold")
-    # Step 5: Write both dataframes incrementally
     write_deltalake(
-        s3_delta_path_property,
-        property_df,
+        RAW_PATH,
+        df,
         storage_options=storage_options,
         mode="append",
         schema_mode="merge",
     )
-    write_deltalake(
-        s3_delta_path_room_items,
-        room_items_df,
-        storage_options=storage_options,
-        mode="append",
-        schema_mode="merge"
+    print(f"✅ Raw delta table ingested for {date_str}")
+
+
+def build_silver_incremental():
+    raw_df = pl.read_delta(RAW_PATH, storage_options=storage_options)
+    now_ts = datetime.now(timezone.utc).isoformat()
+
+    try:
+        existing = pl.read_delta(STG_PROP_PATH, storage_options=storage_options)
+        existing_ids = existing.select("id").unique()
+        new_df = raw_df.filter(
+            ~pl.col("result.pageContext.propertyData._id").is_in(existing_ids["id"])
+        )
+    except Exception:
+        new_df = raw_df
+
+    if new_df.is_empty():
+        print("✅ No new records to process.")
+        return
+
+    # Manually flatten address fields and concatenate
+    cleaned = new_df.with_columns(
+        [
+            pl.concat_str(
+                [
+                    pl.col("result.pageContext.propertyData.address.house_number"),
+                    pl.lit(" "),
+                    pl.col("result.pageContext.propertyData.address.address1"),
+                    pl.lit(", "),
+                    pl.col("result.pageContext.propertyData.address.address2"),
+                    pl.lit(", "),
+                    pl.col("result.pageContext.propertyData.address.address3"),
+                ],
+                separator="",
+            ).alias("full_address"),
+            pl.col("result.pageContext.propertyData.latitude").alias("latitude"),
+            pl.col("result.pageContext.propertyData.longitude").alias("longitude"),
+        ]
     )
-    print(f"pipeline for delta is completed.")
-    print(f"✅ Appended {property_df.shape[0]} property records.")
-    print(f"✅ Appended {room_items_df.shape[0]} room detail records.")
+    cleaned = clean_accommodation_summary_column(cleaned)
+    cleaned = cleaned.with_columns(pl.lit(now_ts).alias("ingested_at"))
 
+    # Extract silver tables
+    prop_df = (
+        cleaned
+        .drop([
+            col for col in cleaned.columns
+            if col.startswith("result.pageContext.propertyData.address.")
+            or col in {
+                "result.pageContext.propertyData.room_details",
+                "result.pageContext.propertyData.images",
+                "result.pageContext.propertyData.extras"
+            }
+        ])
+        .with_columns(pl.col("result.pageContext.propertyData._id").alias("id"))
+    )
 
-
-# Example usage
-if __name__ == "__main__":
-    create_or_update_delta_lake_stg(date)
-    create_intermediate_clean_layer_incremental()      # silver layer
     
-    dt = DeltaTable(s3_delta_path_room_items, storage_options=storage_options)
-    schema = dt.schema().to_arrow()
-    num_records = dt.to_pyarrow_table().num_rows
-    print(f"Silver Table Schema: {schema}")
-    print(f"Number of Records: {num_records}")
-    print(f"Version: {dt.version()}")
-    print(f"Files: {dt.files()}")
+    room_df = explode_room_details(cleaned).with_columns(pl.lit(now_ts).alias("ingested_at"))
+    img_df = explode_images(cleaned).with_columns(pl.lit(now_ts).alias("ingested_at"))
+    agent_df = extract_agent_dim(cleaned).with_columns(pl.lit(now_ts).alias("loaded_at"))
+    loc_df = extract_location_dim(cleaned).with_columns(pl.lit(now_ts).alias("loaded_at"))
+    energy_df = extract_energy_metrics(cleaned).with_columns(pl.lit(now_ts).alias("loaded_at"))
+    # print(f'cols - prop_details count :{len(prop_df.columns)}')
+    
+    for path, df in [
+        (STG_PROP_PATH, prop_df),
+        (STG_ROOMS_PATH, room_df),
+        (STG_IMAGES_PATH, img_df),
+        (STG_AGENT_PATH, agent_df),
+        (STG_LOCATION_PATH, loc_df),
+        (STG_ENERGY_PATH, energy_df),
+    ]:
+        write_deltalake(
+            path,
+            df,
+            storage_options=storage_options,
+            mode="append",
+            schema_mode="merge",
+        )
+        print(f"✅ Appended {df.shape[0]} rows to {path}")
+
+
+if __name__ == "__main__":
+    ingest_raw(dt)
+    build_silver_incremental()
