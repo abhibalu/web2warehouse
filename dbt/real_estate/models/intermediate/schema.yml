@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: int_property_base
+    description: Stable attributes of each property
+    tests:
+      - dbt_expectations.expect_table_columns_to_contain_set:
+          column_list: [property_id, slug, postcode]
+
+  - name: int_property_snapshot
+    description: Price & status history (one row per change)
+    tests:
+      - unique:
+          column_name: "property_id || '-' || valid_from"
+      - not_null:
+          column_name: property_id
+
+  - name: int_room_snapshot
+    description: Room-level details exploded

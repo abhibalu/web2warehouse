@@ -264,7 +264,7 @@ def explode_room_details(df: pl.DataFrame) -> pl.DataFrame:
         long
         .pivot(
             index=["property_id", "room_index"],
-            columns="field",
+            columns="field", # type: ignore
             values="value",
             aggregate_function="first",  # if duplicates exist, keep first non-null
         )
@@ -326,7 +326,7 @@ def explode_images(df: pl.DataFrame) -> pl.DataFrame:
         long
         .pivot(
             index=["property_id", "image_index"],
-            columns="field",
+            columns="field", # type: ignore
             values="value",
             aggregate_function="first",
         )

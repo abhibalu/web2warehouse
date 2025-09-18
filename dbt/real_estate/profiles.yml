@@ -3,6 +3,7 @@ real_estate:
   outputs:
     dev:
       type: duckdb
-      path: /Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/dbt/real_estate/my_data.duckdb
+      path: /Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/data/warehouse.duckdb
       extensions:
         - delta
+      threads: 4

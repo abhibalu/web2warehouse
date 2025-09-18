@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: lake
+    database: warehouse         # DuckDB database name
+    schema: lake           # DuckDB has no schemas by default
+    tables:
+      # - name: raw_property_json
+      - name: ext_property_flat
+      - name: ext_room_items
+      - name: ext_image_items
+      - name: ext_agent_dim
+      - name: ext_location_dim
+      - name: ext_energy_metrics
