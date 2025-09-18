@@ -1,15 +1,99 @@
 name: real_estate
-version: 1.0
+version: "1.0"
 config-version: 2
 
+# ---------------------------------------------------------------------------
+# Profile (must match the key in profiles.yml)
+# ---------------------------------------------------------------------------
 profile: real_estate
 
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
 model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+analysis-paths: ["analyses"]
 macro-paths: ["macros"]
 
+# ---------------------------------------------------------------------------
+# DuckDB specifics
+# ---------------------------------------------------------------------------
+quoting:
+  identifier: false
+  schema: false
+  database: false      # DuckDB uses a single logical DB
+
+# ---------------------------------------------------------------------------
+# Model configurations by directory
+# ---------------------------------------------------------------------------
 models:
   real_estate:
+    +materialized: view     # sensible default
+    +schema: staging 
+    # ---------- STAGING ----------
     staging:
-      +materialized: table  # staging models are persisted tables
+      +materialized: view            # cheap/fast rebuilds
+      +tags: [staging]
+      +schema: staging
+      # +alias: "stg__{{ model.name }}"
+
+    # ---------- INTERMEDIATE ----------
+    intermediate:
+      +materialized: table
+      +tags: [intermediate]
+      # +alias: "int__{{ model.name }}"
+      +schema: intermediate          # logical grouping in docs
+      +on_schema_change: append_new_columns
+
+    # ---------- MARTS (facts & dimensions) ----------
     marts:
-      +materialized: table  # star schema models persisted as tables
+      +materialized: table
+      +unique_key: id
+      +tags: [mart]
+      # +alias: "mart__{{ model.name }}" 
+      +post-hook: ["ANALYZE"] 
+      +schema: marts       # gather stats after build
+
+      facts:
+        +tags: [fact]
+        +cluster_by: [ingest_date]   # optional physical clustering
+
+      dims:
+        +tags: [dimension]
+        +materialized: table
+
+# ---------------------------------------------------------------------------
+# Seeds
+# ---------------------------------------------------------------------------
+seeds:
+  real_estate:
+    +materialized: table
+    +quote_columns: false
+
+# ---------------------------------------------------------------------------
+# Snapshots
+# ---------------------------------------------------------------------------
+snapshots:
+  real_estate:
+    +target_schema: snapshots
+
+# ---------------------------------------------------------------------------
+# Project-wide run-time tweaks
+# ---------------------------------------------------------------------------
+on-run-start:
+  - "PRAGMA memory_limit='2GB';"     # adjust to suit local machine
+
+# ---------------------------------------------------------------------------
+# Packages
+# ---------------------------------------------------------------------------
+packages:
+  - package: dbt-labs/dbt_utils
+    version: ">=1.0.0"
+
+# ---------------------------------------------------------------------------
+# Dispatch (let project override dbt_utils macros if needed)
+# ---------------------------------------------------------------------------
+dispatch:
+  - macro_namespace: dbt_utils
+    search_order: ["real_estate", "dbt_utils"]

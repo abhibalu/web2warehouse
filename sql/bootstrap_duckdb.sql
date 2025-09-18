@@ -9,6 +9,7 @@ INSTALL delta;   LOAD delta;
 --------------------------------------------------------------------
 -- 1. MinIO credentials (CREATE SECRET is the cleanest way)
 --------------------------------------------------------------------
+DROP  SECRET IF EXISTS minio;
 CREATE PERSISTENT SECRET minio (
   TYPE      s3,
   KEY_ID    'minioadmin',
@@ -22,23 +23,25 @@ CREATE PERSISTENT SECRET minio (
 --------------------------------------------------------------------
 -- 2. External Delta views
 --------------------------------------------------------------------
-CREATE OR REPLACE VIEW raw_property_json AS
-SELECT * FROM delta_scan('s3://delta/delta_table/raw/delta_2025-07-18');
 
-CREATE OR REPLACE VIEW stg_property_flat  AS
+CREATE SCHEMA IF NOT EXISTS lake;
+-- CREATE OR REPLACE VIEW raw_property_json AS
+-- SELECT * FROM delta_scan('s3://delta/delta_table/raw/delta_2025-07-18');
+
+CREATE OR REPLACE VIEW lake.ext_property_flat  AS
 SELECT * FROM delta_scan('s3://delta/delta_table/silver/property_details');
 
-CREATE OR REPLACE VIEW stg_room_items     AS
+CREATE OR REPLACE VIEW lake.ext_room_items     AS
 SELECT * FROM delta_scan('s3://delta/delta_table/silver/property_rooms');
 
-CREATE OR REPLACE VIEW stg_image_items    AS
+CREATE OR REPLACE VIEW lake.ext_image_items    AS
 SELECT * FROM delta_scan('s3://delta/delta_table/silver/property_images');
 
-CREATE OR REPLACE VIEW stg_agent_dim      AS
+CREATE OR REPLACE VIEW lake.ext_agent_dim      AS
 SELECT * FROM delta_scan('s3://delta/delta_table/silver/agents');
 
-CREATE OR REPLACE VIEW stg_location_dim   AS
+CREATE OR REPLACE VIEW lake.ext_location_dim   AS
 SELECT * FROM delta_scan('s3://delta/delta_table/silver/locations');
 
-CREATE OR REPLACE VIEW stg_energy_metrics AS
+CREATE OR REPLACE VIEW lake.ext_energy_metrics AS
 SELECT * FROM delta_scan('s3://delta/delta_table/silver/property_energy');

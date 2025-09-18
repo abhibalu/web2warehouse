@@ -46,7 +46,7 @@ def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
 
     try:
         for page in range(start_page, end_page + 1):
-            print(f"🔎 Scraping page {page}...")
+            print(f"Scraping page {page}...")
             driver.get(BASE_URL.format(page=page))
 
             WebDriverWait(driver, 10).until(
@@ -70,7 +70,7 @@ def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
                 time.sleep(10)
 
     except Exception as e:
-        print(f"❌ Error scraping pages: {e}")
+        print(f"Error scraping pages: {e}")
     finally:
         driver.quit()
 
@@ -92,15 +92,15 @@ def scrape_and_upload_ndjson(links: List[str]):
 
                 if cleaned_data:
                     buffer.write(json.dumps(cleaned_data) + "\n")
-                    print(f"✅ {i+1}/{len(links)}: Written to buffer")
+                    print(f"{i+1}/{len(links)}: Written to buffer")
 
             else:
                 print(
-                    f"⚠️ Failed to fetch {json_url} – Status Code: {response.status_code}"
+                    f"Failed to fetch {json_url} – Status Code: {response.status_code}"
                 )
 
         except Exception as e:
-            print(f"❌ Error processing link {link}: {e}")
+            print(f"Error processing link {link}: {e}")
 
     # Convert buffer to BytesIO for MinIO upload
     byte_data = io.BytesIO(buffer.getvalue().encode("utf-8"))
@@ -122,6 +122,6 @@ if __name__ == "__main__":
     start_page = 24
     end_page = 24
     links = scrape_props_links_across_pages(start_page=start_page, end_page=end_page)
-    print(f"🔗 Total property links found: {len(links)}")
+    print(f"Total property links found: {len(links)}")
     scrape_and_upload_ndjson(links)
     # , start_page=start_page, end_page=end_page
