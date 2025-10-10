@@ -28,7 +28,6 @@ endpoint_url = os.getenv("MINIO_ENDPOINT_URL")
 access_key_id = os.getenv("MINIO_ACCESS_KEY_ID")
 secret_access_key = os.getenv("MINIO_SECRET_ACCESS_KEY")
 
-minio_client = create_minio_client(endpoint_url, access_key_id, secret_access_key)
 
 # Ensure output directory exists
 # os.makedirs(SCRAPED_DATA_DIR, exist_ok=True)
@@ -77,7 +76,7 @@ def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
     return all_links
 
 
-def scrape_and_upload_ndjson(links: List[str]):
+def scrape_and_upload_ndjson(links: List[str], minio_client):
     # , start_page: int, end_page: int
     buffer = io.StringIO()
 
@@ -105,7 +104,8 @@ def scrape_and_upload_ndjson(links: List[str]):
     # Convert buffer to BytesIO for MinIO upload
     byte_data = io.BytesIO(buffer.getvalue().encode("utf-8"))
     object_name = OBJECT_NAME_TEMPLATE.format(date=date)
-
+    print(f'access_key_id - {access_key_id}')
+    
     # Upload to MinIO
     minio_client.put_object(
         Bucket=BUCKET_NAME,
@@ -121,7 +121,8 @@ def scrape_and_upload_ndjson(links: List[str]):
 if __name__ == "__main__":
     start_page = 24
     end_page = 24
+    minio_client = create_minio_client(endpoint_url, access_key_id, secret_access_key)
     links = scrape_props_links_across_pages(start_page=start_page, end_page=end_page)
     print(f"Total property links found: {len(links)}")
-    scrape_and_upload_ndjson(links)
+    scrape_and_upload_ndjson(links, minio_client)
     # , start_page=start_page, end_page=end_page
