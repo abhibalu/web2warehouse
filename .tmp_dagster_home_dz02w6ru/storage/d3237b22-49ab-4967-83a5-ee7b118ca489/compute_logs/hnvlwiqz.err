@@ -1,0 +1,33 @@
+[32m2025-10-10 16:16:20 +0100[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d3237b22-49ab-4967-83a5-ee7b118ca489 - 34823 - LOGS_CAPTURED - Started capturing logs in process (pid: 34823).
+[32m2025-10-10 16:16:20 +0100[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d3237b22-49ab-4967-83a5-ee7b118ca489 - 34823 - raw_properties - STEP_START - Started execution of step "raw_properties".
+[32m2025-10-10 16:16:34 +0100[0m - dagster - [34mERROR[0m - [31m__ASSET_JOB - d3237b22-49ab-4967-83a5-ee7b118ca489 - 34823 - raw_properties - STEP_FAILURE - Execution of step "raw_properties" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "raw_properties"::
+
+botocore.errorfactory.NoSuchBucket: An error occurred (NoSuchBucket) when calling the PutObject operation: The specified bucket does not exist
+
+Stack Trace:
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_core/execution/plan/utils.py", line 57, in op_execution_error_boundary
+    yield
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_utils/__init__.py", line 392, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 137, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 117, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+                                                                    ^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/dagster_realestate/assets/scraping.py", line 13, in raw_properties
+    scrape_and_upload_ndjson(links, minio)
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/pipelines/scrape_props.py", line 113, in scrape_and_upload_ndjson
+    minio_client.put_object(
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/botocore/client.py", line 601, in _api_call
+    return self._make_api_call(operation_name, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/botocore/context.py", line 123, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/botocore/client.py", line 1074, in _make_api_call
+    raise error_class(parsed_response, operation_name)
+[0m

@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from dotenv import load_dotenv
 
-from pipelines.minio_upload import create_minio_client
+from pipelines.minio_upload import create_minio_client, ensure_bucket_exists
 from pipelines.helper_functions import transform_to_json_url, flatten_json
 
 load_dotenv()
@@ -80,6 +80,8 @@ def scrape_and_upload_ndjson(links: List[str], minio_client):
     # , start_page: int, end_page: int
     buffer = io.StringIO()
 
+    ensure_bucket_exists(minio_client, BUCKET_NAME)
+
     for i, link in enumerate(links):
         try:
             json_url = transform_to_json_url(link)
@@ -122,6 +124,7 @@ if __name__ == "__main__":
     start_page = 24
     end_page = 24
     minio_client = create_minio_client(endpoint_url, access_key_id, secret_access_key)
+    ensure_bucket_exists(minio_client, BUCKET_NAME)
     links = scrape_props_links_across_pages(start_page=start_page, end_page=end_page)
     print(f"Total property links found: {len(links)}")
     scrape_and_upload_ndjson(links, minio_client)

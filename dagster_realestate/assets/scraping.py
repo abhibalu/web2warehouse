@@ -1,6 +1,7 @@
 
 from dagster import asset
-from pipelines.scrape_props import scrape_props_links_across_pages, scrape_and_upload_ndjson
+from pipelines.scrape_props import scrape_props_links_across_pages, scrape_and_upload_ndjson, BUCKET_NAME
+from pipelines.minio_upload import ensure_bucket_exists
 from ..resources import MinioResource
 
 @asset
@@ -10,5 +11,6 @@ def raw_properties(minio: MinioResource):
     end_page = 24
     links = scrape_props_links_across_pages(start_page=start_page, end_page=end_page)
     minio_client = minio.get_client()
+    ensure_bucket_exists(minio_client, BUCKET_NAME)
     scrape_and_upload_ndjson(links, minio_client)
 
