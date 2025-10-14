@@ -63,10 +63,11 @@ def ingest_raw(date_str: date):
         mode="append",
         schema_mode="merge",
     )
-    print(f"✅ Raw delta table ingested for {date_str}")
+    print(f"Raw delta table ingested for {date_str}")
 
 
 def build_silver_incremental():
+
     raw_df = pl.read_delta(RAW_PATH, storage_options=storage_options)
     now_ts = datetime.now(timezone.utc).isoformat()
 
@@ -88,8 +89,8 @@ def build_silver_incremental():
         [
             pl.concat_str(
                 [
-                    pl.col("result.pageContext.propertyData.address.house_number"),
-                    pl.lit(" "),
+                    # pl.col("result.pageContext.propertyData.address.house_number"),
+                    # pl.lit(" "),
                     pl.col("result.pageContext.propertyData.address.address1"),
                     pl.lit(", "),
                     pl.col("result.pageContext.propertyData.address.address2"),
@@ -147,5 +148,6 @@ def build_silver_incremental():
 
 
 if __name__ == "__main__":
+    # print(f'dt-{dt}')
     ingest_raw(dt)
     build_silver_incremental()

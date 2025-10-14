@@ -39,13 +39,14 @@ date = datetime.date.today()
 
 def scrape_props_links_across_pages(start_page=1, end_page=3) -> List[str]:
     options = Options()
-    # options.add_argument("--headless=new")  # Uncomment to run headless
+    options.add_argument("--headless=new")  # Uncomment to run headless
     driver = webdriver.Chrome(options=options)
     all_links = []
 
     try:
         for page in range(start_page, end_page + 1):
             print(f"Scraping page {page}...")
+            print(f'BASE_URL.format(page=page)-{BASE_URL}')
             driver.get(BASE_URL.format(page=page))
 
             WebDriverWait(driver, 10).until(
@@ -106,7 +107,7 @@ def scrape_and_upload_ndjson(links: List[str], minio_client):
     # Convert buffer to BytesIO for MinIO upload
     byte_data = io.BytesIO(buffer.getvalue().encode("utf-8"))
     object_name = OBJECT_NAME_TEMPLATE.format(date=date)
-    print(f'access_key_id - {access_key_id}')
+    # print(f'access_key_id - {access_key_id}')
     
     # Upload to MinIO
     minio_client.put_object(
