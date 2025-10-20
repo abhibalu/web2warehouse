@@ -40,7 +40,7 @@ def read_ndjson_from_minio(date):
         response = s3.get_object(Bucket=BUCKET_NAME, Key=object_key)
         content = response["Body"].read().decode("utf-8")
         json_lines = [json.loads(line) for line in content.strip().splitlines()]
-        print(f'json_line-{json_lines}')
+        # print(f'json_line-{json_lines}')
         return json_lines
     except s3.exceptions.NoSuchKey:
         raise FileNotFoundError(f"Object not found: {object_key}")

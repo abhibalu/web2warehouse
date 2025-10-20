@@ -25,9 +25,12 @@ CREATE PERSISTENT SECRET minio (
 --------------------------------------------------------------------
 
 CREATE SCHEMA IF NOT EXISTS lake;
--- CREATE OR REPLACE VIEW raw_property_json AS
--- SELECT * FROM delta_scan('s3://delta/delta_table/raw/delta_2025-07-18');
 
+-- Raw layer (single append-only table)
+CREATE OR REPLACE VIEW lake.raw_properties AS
+SELECT * FROM delta_scan('s3://delta/delta_table/raw/properties');
+
+-- Silver layer (curated dimensional tables)
 CREATE OR REPLACE VIEW lake.ext_property_flat  AS
 SELECT * FROM delta_scan('s3://delta/delta_table/silver/property_details');
 
