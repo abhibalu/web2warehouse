@@ -1,0 +1,7 @@
+Scraping page 1 → https://www.dng.ie/property/for-sale/in-ireland/page-1/
+Collected 15 unique links so far
+Scraping page 2 → https://www.dng.ie/property/for-sale/in-ireland/page-2/
+Collected 30 unique links so far
+Bucket 'staging' already exists.
+Bucket 'staging' already exists.
+🚀 NDJSON file uploaded to MinIO bucket 'staging' as 'raw/scraped_data_2025-10-20/scraped_data_2025-10-20.ndjson'

@@ -1,0 +1,9 @@
+Processing raw records since: 2025-10-20T19:35:45.996913+00:00
+Processing 1 new raw records
+✓ Upserted 1 rows into s3a://delta/delta_table/silver/property_details
+✓ Upserted 11 rows into s3a://delta/delta_table/silver/property_rooms
+✓ Upserted 15 rows into s3a://delta/delta_table/silver/property_images
+✓ Upserted 1 rows into s3a://delta/delta_table/silver/agents
+✓ Upserted 1 rows into s3a://delta/delta_table/silver/locations
+✓ Upserted 1 rows into s3a://delta/delta_table/silver/property_energy
+✓ Watermark updated: 2025-10-20T19:52:21.539833+00:00

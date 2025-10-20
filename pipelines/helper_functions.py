@@ -346,21 +346,25 @@ def explode_images(df: pl.DataFrame) -> pl.DataFrame:
             values="value",
             aggregate_function="first",
         )
-        .rename(
-            {
-                "srcUrl": "src_url",
-                "url": "full_url",
-                "caption": "caption",
-                "order": "image_order",
-                "etag": "etag",
-                "reapit_etag": "reapit_etag",
-                "last-modified": "last_modified",
-                "createdAt": "created_at",
-                "updatedAt": "updated_at",
-            }
-        )
-        .sort(["property_id", "image_index"])
     )
+
+    # Rename only columns that actually exist to avoid errors when optional fields are absent
+    rename_candidates = {
+        "srcUrl": "src_url",
+        "url": "full_url",
+        "caption": "caption",
+        "order": "image_order",
+        "etag": "etag",
+        "reapit_etag": "reapit_etag",
+        "last-modified": "last_modified",
+        "createdAt": "created_at",
+        "updatedAt": "updated_at",
+    }
+    rename_map = {k: v for k, v in rename_candidates.items() if k in wide.columns}
+    if rename_map:
+        wide = wide.rename(rename_map)
+
+    wide = wide.sort(["property_id", "image_index"])
     return wide
 
 # ------------------------------------------------------------------

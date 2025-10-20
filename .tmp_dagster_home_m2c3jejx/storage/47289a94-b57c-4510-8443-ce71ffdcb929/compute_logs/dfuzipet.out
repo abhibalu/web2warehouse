@@ -1,0 +1,3 @@
+Dropped null-only columns: ['result.pageContext.propertyData.extras.alternateId', 'result.pageContext.propertyData.images.2.hash', 'result.pageContext.propertyData.images.1.hash', 'result.pageContext.propertyData.images.0.hash']
+Filtered 61 existing property_ids from batch
+No new records to append to raw (all already exist)
