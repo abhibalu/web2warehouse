@@ -7,8 +7,14 @@ sources:
     tables:
       # - name: raw_property_json
       - name: ext_property_flat
+        description: Flattened property JSON pulled from scraping pipeline with ingestion metadata
       - name: ext_room_items
+        description: Room-level items extracted from property pages
       - name: ext_image_items
+        description: Image-level metadata extracted from property pages
       - name: ext_agent_dim
+        description: Agent reference data (if available); may be derived from listings
       - name: ext_location_dim
+        description: Location reference data (if available) including postcode and locality
       - name: ext_energy_metrics
+        description: Energy metrics (EPC labels etc.) if present
