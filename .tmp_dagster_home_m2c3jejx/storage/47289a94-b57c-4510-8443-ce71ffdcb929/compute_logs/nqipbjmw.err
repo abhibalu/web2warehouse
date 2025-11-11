@@ -1,0 +1,41 @@
+[32m2025-10-20 21:00:50 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43601 - LOGS_CAPTURED - Started capturing logs in process (pid: 43601).
+[32m2025-10-20 21:00:50 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43601 - silver_build_incremental - STEP_START - Started execution of step "silver_build_incremental".
+[32m2025-10-20 21:00:51 +0100[0m - dagster - [34mINFO[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - silver_build_incremental - Starting silver incremental build
+[32m2025-10-20 21:00:51 +0100[0m - dagster - [34mERROR[0m - [31metl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43601 - silver_build_incremental - STEP_FAILURE - Execution of step "silver_build_incremental" failed.
+
+dagster._core.errors.DagsterExecutionStepExecutionError: Error occurred while executing op "silver_build_incremental"::
+
+polars.exceptions.ColumnNotFoundError: "updatedAt" not found
+
+Stack Trace:
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_core/execution/plan/utils.py", line 57, in op_execution_error_boundary
+    yield
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_utils/__init__.py", line 392, in iterate_with_context
+    next_output = next(iterator)
+                  ^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 137, in _coerce_op_compute_fn_to_iterator
+    result = invoke_compute_fn(
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/dagster/_core/execution/plan/compute_generator.py", line 117, in invoke_compute_fn
+    return fn(context, **args_to_pass) if context_arg_provided else fn(**args_to_pass)
+                                                                    ^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/dagster_realestate/assets/delta.py", line 22, in silver_build_incremental
+    build_silver_incremental()
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/pipelines/delta_lake.py", line 228, in build_silver_incremental
+    explode_images(cleaned)
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/pipelines/helper_functions.py", line 349, in explode_images
+    .rename(
+     ^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/polars/dataframe/frame.py", line 4935, in rename
+    .collect(optimizations=QueryOptFlags._eager())
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/polars/_utils/deprecation.py", line 97, in wrapper
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/polars/lazyframe/opt_flags.py", line 330, in wrapper
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.venv/lib/python3.11/site-packages/polars/lazyframe/frame.py", line 2332, in collect
+    return wrap_df(ldf.collect(engine, callback))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[0m

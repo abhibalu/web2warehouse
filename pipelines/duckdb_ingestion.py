@@ -30,11 +30,11 @@ def main():
     """
     )
 
-    # 4. Define Delta table path on MinIO
+    # 4. Define Delta table path on MinIO (align with silver paths)
     property_details_room_items = (
-        "s3://delta/delta_table/silver/delta_clean/property_details_room_items"
+        "s3://delta/delta_table/silver/property_rooms"
     )
-    property_details = "s3://delta/delta_table/silver/delta_clean/property_details"
+    property_details = "s3://delta/delta_table/silver/property_details"
 
     count_pre_ing_property_details = con.sql(
         "select count(*) from property_details_mt;"

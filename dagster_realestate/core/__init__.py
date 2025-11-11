@@ -1,0 +1,1 @@
+"""Core Dagster assets for the real estate pipeline."""

@@ -1,0 +1,9 @@
+[32m2025-10-20 21:04:53 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - 46219 - LOGS_CAPTURED - Started capturing logs in process (pid: 46219).
+[32m2025-10-20 21:04:53 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - 46219 - silver_build_incremental - STEP_START - Started execution of step "silver_build_incremental".
+[32m2025-10-20 21:04:53 +0100[0m - dagster - [34mINFO[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - silver_build_incremental - Starting silver incremental build
+[32m2025-10-20 21:04:58 +0100[0m - dagster - [34mINFO[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - silver_build_incremental - Finished silver incremental build
+[32m2025-10-20 21:04:58 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - 46219 - silver_build_incremental - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+[32m2025-10-20 21:04:58 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - silver_build_incremental - Writing file at: /Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.tmp_dagster_home_m2c3jejx/storage/silver_build_incremental using PickledObjectFilesystemIOManager...
+[32m2025-10-20 21:04:58 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - 46219 - silver_build_incremental - ASSET_MATERIALIZATION - Materialized value silver_build_incremental.
+[32m2025-10-20 21:04:58 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - 46219 - silver_build_incremental - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2025-10-20 21:04:58 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 3e15cc57-55e1-497c-9ca0-fdbef2fa2b50 - 46219 - silver_build_incremental - STEP_SUCCESS - Finished execution of step "silver_build_incremental" in 5.02s.

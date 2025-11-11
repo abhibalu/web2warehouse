@@ -1,0 +1,70 @@
+version: 2
+
+models:
+  - name: dim_property_current
+    description: Current view of each property with latest status and core attributes
+    columns:
+      - name: property_id
+        tests: [not_null, unique]
+      - name: postcode
+        tests: [not_null]
+      - name: current_status
+        description: Latest known listing status from SCD2
+      - name: bedrooms
+        description: Number of bedrooms if available
+
+  - name: dim_agent
+    description: Agent dimension
+    columns:
+      - name: agent_id
+        tests: [not_null, unique]
+        description: Natural agent identifier from the source
+
+  - name: dim_location
+    description: Location dimension by postcode
+    columns:
+      - name: postcode
+        tests: [not_null, unique]
+        description: Postal code used for analysis
+      - name: town
+        description: Representative town for the postcode
+      - name: area
+        description: Representative area for the postcode
+
+  - name: fact_property_snapshot
+    description: SCD2 style property pricing/status facts
+    columns:
+      - name: property_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_property_current')
+              field: property_id
+      - name: agent_id
+        tests:
+          - relationships:
+              to: ref('dim_agent')
+              field: agent_id
+      - name: postcode
+        tests:
+          - relationships:
+              to: ref('dim_location')
+              field: postcode
+      - name: valid_from
+        description: Start date when this price/status became valid
+      - name: valid_to
+        description: End date (exclusive) when this price/status stops being valid
+
+  - name: mart_postcode_price_analysis
+    description: Aggregated price metrics by postcode
+    columns:
+      - name: postcode
+        tests: [not_null]
+      - name: avg_price
+        description: Average price across snapshot intervals
+      - name: median_price
+        description: Median price across snapshot intervals
+      - name: p95_price
+        description: 95th percentile price for high-end overview
+
+

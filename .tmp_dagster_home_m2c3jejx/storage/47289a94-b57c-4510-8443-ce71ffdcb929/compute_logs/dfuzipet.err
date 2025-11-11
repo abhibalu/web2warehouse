@@ -1,0 +1,9 @@
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43517 - LOGS_CAPTURED - Started capturing logs in process (pid: 43517).
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43517 - raw_delta_ingest - STEP_START - Started execution of step "raw_delta_ingest".
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mINFO[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - raw_delta_ingest - Starting raw Delta ingest
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mINFO[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - raw_delta_ingest - Finished raw Delta ingest
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43517 - raw_delta_ingest - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - raw_delta_ingest - Writing file at: /Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.tmp_dagster_home_m2c3jejx/storage/raw_delta_ingest using PickledObjectFilesystemIOManager...
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43517 - raw_delta_ingest - ASSET_MATERIALIZATION - Materialized value raw_delta_ingest.
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43517 - raw_delta_ingest - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2025-10-20 21:00:49 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 43517 - raw_delta_ingest - STEP_SUCCESS - Finished execution of step "raw_delta_ingest" in 455ms.

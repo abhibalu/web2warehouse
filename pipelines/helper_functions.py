@@ -19,8 +19,6 @@ load_dotenv()
 date = datetime.date.today()
 
 URL = os.getenv("URL")
-JSON_PATH = os.getenv("JSON_PATH")
-JSON_SUFFIX = os.getenv("JSON_SUFFIX")
 
 BUCKET_NAME = os.getenv("BUCKET_NAME")
 OBJECT_NAME_TEMPLATE = os.getenv("OBJECT_NAME_TEMPLATE")
@@ -34,6 +32,7 @@ s3 = create_minio_client(endpoint_url, access_key_id, secret_access_key)
 
 
 def read_ndjson_from_minio(date):
+    # print(f"OBJECT_NAME_TEMPLATE-{OBJECT_NAME_TEMPLATE}")
     object_key = OBJECT_NAME_TEMPLATE.format(date=date)
     # print(f'object_key - {object_key}')
 
@@ -41,6 +40,7 @@ def read_ndjson_from_minio(date):
         response = s3.get_object(Bucket=BUCKET_NAME, Key=object_key)
         content = response["Body"].read().decode("utf-8")
         json_lines = [json.loads(line) for line in content.strip().splitlines()]
+        # print(f'json_line-{json_lines}')
         return json_lines
     except s3.exceptions.NoSuchKey:
         raise FileNotFoundError(f"Object not found: {object_key}")
@@ -120,7 +120,23 @@ def flatten_property_data_polars(df: pl.DataFrame) -> pl.DataFrame:
 
 
 def transform_to_json_url(link: str) -> str:
-    return link.replace(URL, f"{URL}/{JSON_PATH}") + JSON_SUFFIX
+    # Example link: https://www.dng.ie/property-for-sale/some-property-details/
+    # Desired JSON URL: https://www.dng.ie/page-data/property-for-sale/some-property-details/page-data.json
+
+    parts = link.split('://', 1)
+    protocol = parts[0]
+    rest = parts[1]
+
+    domain_end_index = rest.find('/')
+    domain = rest[:domain_end_index]
+    path = rest[domain_end_index:]
+
+    # Ensure path ends with a slash
+    if not path.endswith('/'):
+        path += '/'
+
+    json_url = f"{protocol}://{domain}/page-data{path}page-data.json"
+    return json_url
 
 
 
@@ -330,21 +346,25 @@ def explode_images(df: pl.DataFrame) -> pl.DataFrame:
             values="value",
             aggregate_function="first",
         )
-        .rename(
-            {
-                "srcUrl": "src_url",
-                "url": "full_url",
-                "caption": "caption",
-                "order": "image_order",
-                "etag": "etag",
-                "reapit_etag": "reapit_etag",
-                "last-modified": "last_modified",
-                "createdAt": "created_at",
-                "updatedAt": "updated_at",
-            }
-        )
-        .sort(["property_id", "image_index"])
     )
+
+    # Rename only columns that actually exist to avoid errors when optional fields are absent
+    rename_candidates = {
+        "srcUrl": "src_url",
+        "url": "full_url",
+        "caption": "caption",
+        "order": "image_order",
+        "etag": "etag",
+        "reapit_etag": "reapit_etag",
+        "last-modified": "last_modified",
+        "createdAt": "created_at",
+        "updatedAt": "updated_at",
+    }
+    rename_map = {k: v for k, v in rename_candidates.items() if k in wide.columns}
+    if rename_map:
+        wide = wide.rename(rename_map)
+
+    wide = wide.sort(["property_id", "image_index"])
     return wide
 
 # ------------------------------------------------------------------
@@ -371,7 +391,7 @@ def extract_location_dim(df: pl.DataFrame) -> pl.DataFrame:
     """Unique set of locations with lat/lon."""
     return (
         df.select(
-            pl.col("result.pageContext.propertyData.address.house_number").alias("house_number"),
+            # pl.col("result.pageContext.propertyData.address.house_number").alias("house_number"),
             pl.col("result.pageContext.propertyData.address.address1").alias("address_line1"),
             pl.col("result.pageContext.propertyData.address.address2").alias("address_line2"),
             pl.col("result.pageContext.propertyData.address.address3").alias("address_line3"),

@@ -1,0 +1,10 @@
+[32m2025-10-20 21:00:10 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 42907 - LOGS_CAPTURED - Started capturing logs in process (pid: 42907).
+[32m2025-10-20 21:00:10 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 42907 - raw_properties - STEP_START - Started execution of step "raw_properties".
+[32m2025-10-20 21:00:10 +0100[0m - dagster - [34mINFO[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - raw_properties - Starting property scraping asset
+[32m2025-10-20 21:00:35 +0100[0m - dagster - [34mINFO[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - raw_properties - Found 30 property links to process
+[32m2025-10-20 21:00:47 +0100[0m - dagster - [34mINFO[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - raw_properties - Successfully uploaded data for 30 properties
+[32m2025-10-20 21:00:47 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 42907 - raw_properties - STEP_OUTPUT - Yielded output "result" of type "Any". (Type check passed).
+[32m2025-10-20 21:00:47 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - raw_properties - Writing file at: /Users/abhijithm/Documents/Code/Scrapping/real_estate_pipeline/.tmp_dagster_home_m2c3jejx/storage/raw_properties using PickledObjectFilesystemIOManager...
+[32m2025-10-20 21:00:47 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 42907 - raw_properties - ASSET_MATERIALIZATION - Materialized value raw_properties.
+[32m2025-10-20 21:00:47 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 42907 - raw_properties - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2025-10-20 21:00:47 +0100[0m - dagster - [34mDEBUG[0m - etl_all - 47289a94-b57c-4510-8443-ce71ffdcb929 - 42907 - raw_properties - STEP_SUCCESS - Finished execution of step "raw_properties" in 37.39s.

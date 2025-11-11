@@ -1,0 +1,20 @@
+Scraping page 24...
+Bucket 'staging' already exists.
+Bucket 'staging' already exists.
+1/15: Written to buffer
+2/15: Written to buffer
+3/15: Written to buffer
+4/15: Written to buffer
+5/15: Written to buffer
+Failed to fetch https://www.dng.ie//page-data/property-for-sale/2-bedroom-house-for-sale-in-11-faulkners-terrace-mount-brown-kilmainham-dublin-8-641891125a1c96203417709e//page-data.json – Status Code: 404
+7/15: Written to buffer
+8/15: Written to buffer
+9/15: Written to buffer
+10/15: Written to buffer
+11/15: Written to buffer
+12/15: Written to buffer
+13/15: Written to buffer
+14/15: Written to buffer
+15/15: Written to buffer
+access_key_id - admin
+🚀 NDJSON file uploaded to MinIO bucket 'staging' as 'raw/scraped_data_2025-10-10/scraped_data_2025-10-10.ndjson'
